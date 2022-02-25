@@ -1,4 +1,5 @@
 let modelUser = require("../models/index").user
+let jwt = require(`jsonwebtoken`)
 
 const { request, response } = require("express");
 const md5 = require("md5")
@@ -72,4 +73,33 @@ exports.deleteDataUser = (request, response) => {
             message: error.message
         })
     })
+}
+
+exports.authentication = async (request, response) => {
+    let data = {
+        username: request.body.username,
+        password: md5(request.body.password)
+    }
+
+    //validasi (mengecek data ada atau tidak di tabel)
+    let result = await modelUser.findOne({where: data})
+    if (result) {
+        //data ditemukan
+        //payload adalah data/informasi yg akan dienkripsi
+        let payload = JSON.stringify(result)
+        let secretKey = `wow ini sangat menyenangkan`
+
+        //generate token
+        let token = jwt.sign(payload, secretKey)
+        return response.json({
+            logged: true,
+            token: token
+        })
+    } else {
+        //data tdk ditemukan
+        return response.json({
+            logged: false,
+            message: `Invalid username or password`
+        })
+    }
 }

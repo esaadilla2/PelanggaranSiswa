@@ -7,7 +7,7 @@ exports.getData = async (request, response) => {
     let data = await pelanggaranSiswaModel.findAll({
         include: ["siswa", "user", {
             model: detailPelanggaranSiswaModel,
-            as: "detail_pelanggaran",
+            as: "detail_pelanggaran_siswa",
             include:["pelanggaran"]
         }]
     })

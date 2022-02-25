@@ -5,16 +5,19 @@ app.use(express.json())
 
 let userController = require("../controllers/userController")
 
-//end point untuk data siswa
+//end point untuk data user
 app.get("/", userController.getDataUser)
 
-//end point untuk add siswa
+//end point untuk add user
 app.post("/", userController.addDataUser)
 
-//end point untuk edit siswa
+//end point untuk edit user
 app.put("/:id_user", userController.editDataUser)
 
-//end point untuk delete siswa
+//end point untuk delete user
 app.delete("/:id_user", userController.deleteDataUser)
+
+//autentikasi
+app.post("/auth", userController.authentication)
 
 module.exports = app

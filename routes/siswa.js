@@ -5,11 +5,21 @@ app.use(express.json())
 
 let siswaController = require("../controllers/siswaController")
 
+//memanggil middleware
+let tesmidware = require("../middleware/tesMidware")
+let authorize = require("../middleware/authorization")
+let uploadImg = require("../middleware/uploadImg")
+
 //end point untuk data siswa
-app.get("/", siswaController.getDataSiswa)
+app.get("/", 
+    [tesmidware.midware1, tesmidware.midware2, authorize.authorization], 
+    siswaController.getDataSiswa
+)
 
 //end point untuk add siswa
-app.post("/", siswaController.addDataSiswa)
+app.post("/", 
+    [uploadImg.upload.single(`image`), authorize.authorization], 
+    siswaController.addDataSiswa)
 
 //end point untuk edit siswa
 app.put("/:id_siswa", siswaController.editDataSiswa)

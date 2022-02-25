@@ -3,6 +3,9 @@ let modelSiswa = require("../models/index").siswa
 
 const { request, response } = require("express");
 
+let path = require("path")
+let fs = require("fs")
+
 // export digunakan untuk memanggil fungsinya ke file siswa
 exports.getDataSiswa = (request, response) => {
     modelSiswa.findAll()
@@ -17,12 +20,18 @@ exports.getDataSiswa = (request, response) => {
 }
 
 exports.addDataSiswa = (request, response) => {
+    if (!request.file) {
+        return response.json({
+            message: `Nothing to upload`
+        })
+    }
     //tampung data request
     let newSiswa = {
         nama: request.body.nama,
         kelas: request.body.kelas,
         poin: request.body.poin,
-        nis: request.body.nis
+        nis: request.body.nis,
+        image: request.file.filename
     }
 
     modelSiswa.create(newSiswa)
@@ -60,8 +69,17 @@ exports.editDataSiswa = (request, response) => {
     })
 }
 
-exports.deleteDataSiswa = (request, response) => {
+exports.deleteDataSiswa = async (request, response) => {
     let id = request.params.id_siswa
+
+    let siswa = await modelSiswa.findOne({where: {id_siswa: id}})
+    if (siswa ) {
+        let oldFileName = siswa.image
+
+        //del file
+        let location = path.join(__dirname, "../image, oldFileName")
+        fs.unlink(location, error => console.log(error))
+    }
     
     modelSiswa.destroy({where: {id_siswa: id}})
     .then(result => {
